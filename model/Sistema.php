@@ -5,28 +5,33 @@ class Sistema extends Main
    
     function menu()
     {
-        $stmt = $this->db->prepare("select m.id_modulos,m.idpadre,m.descripcion,m.url from seguridad.modulos m inner join seguridad.permisos p on m.id_modulos=p.id_modulos where m.estado=1 and m.idpadre is null and p.id_perfil=:p1 and p.acceder=1 order by m.orden");
-        $stmt->bindValue(':p1', $_SESSION['id_perfil'] , PDO::PARAM_INT);
+        $stmt = $this->db->prepare("
+            select m.idModulo,m.submodulo,m.Modulo,m.url from 
+Modulo m inner join Permiso p on m.idModulo=p.idModulo where m.estado=0 and  
+m.submodulo is null and p.idPerfil=:p1 and p.acceso=0 order by m.orden
+            ");
+       $stmt->bindValue(':p1', $_SESSION['idperfil'] , PDO::PARAM_INT);
         $stmt->execute();        
         $items = $stmt->fetchAll();
         $cont = 0; 
         $cont2 = 0;
         foreach ($items as $valor)
         {
-            $stmt = $this->db->prepare("select m.id_modulos,m.idpadre,m.descripcion,m.url from seguridad.modulos m inner join seguridad.permisos p on m.id_modulos=p.id_modulos where m.estado=1 and m.idpadre=".$valor['id_modulos']." and p.id_perfil=:p1 and p.acceder=1 order by m.orden");
-            $stmt->bindValue(':p1', $_SESSION['id_perfil'] , PDO::PARAM_INT);
+            $stmt = $this->db->prepare("select m.idModulo,m.submodulo,m.Modulo,m.url
+                from Modulo m inner join Permiso p on m.idModulo=p.idModulo where m.estado=0 and m.submodulo=$valor[0] and p.idPerfil=:p1 and p.acceso=0 order by m.orden");
+            $stmt->bindValue(':p1', $_SESSION['idperfil'] , PDO::PARAM_INT);
             $stmt->execute();
             $hijos = $stmt->fetchAll();
             $menu[$cont] = array(
-			'idmodulo'=>$valor['id_modulos'],
-            'texto' => $valor['descripcion'],
+			'idmodulo'=>$valor[0],
+            'texto' => $valor[2],
             'url' => '',
             'enlaces' => array()
                 );
             $cont2 = 0;
             foreach($hijos as $h)
             {
-              $menu[$cont]['enlaces'][$cont2] = array('idmodulo'=>$h['id_modulos'],'texto' => $h['descripcion'],'url' => $h['url']);
+              $menu[$cont]['enlaces'][$cont2] = array('idmodulo'=>$h[0],'texto' => $h[2],'url' => $h[3]);
               $cont2 ++;
             }
             $cont ++;

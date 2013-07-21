@@ -16,7 +16,7 @@ class UserController extends Controller
                   
 			$obj = $_p['obj'];
 		    $_SESSION['usuario']=$obj->usuario;
-			$_SESSION['id_perfil']=$obj->idperfil;
+			$_SESSION['idperfil']=$obj->idperfil;
 			$_SESSION['perfil']=$obj->perfil;
                        $_SESSION['idsucursal']=$obj->idsucursal;
 			$_SESSION['sucursal']=$obj->sucursal;
